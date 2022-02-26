@@ -1,6 +1,6 @@
 import torch
 import cv2 
-import beepy as beep
+#import beepy as beep
 import numpy as np 
 
 def detect(image , model):
@@ -15,7 +15,10 @@ def detect(image , model):
     data["Area"] = area
     data.sort_values(by=['Area'], inplace=True, ascending=False)
 
-    
+    data = data[(data.name == 'person')]
+    print(data)
+    if len(data) == 0 :
+        return None
     
     x1 = int(data.iloc[0]["xmin"])
     y1 = int(data.iloc[0]["ymin"])
