@@ -11,11 +11,13 @@ def detect(image , model):
         return None
     
     data = results.pandas().xyxy[0].copy()
+    #if you need to change the confidence, change 0.7 (70%) below:
+    data = data[(data.confidence > 0.7 )]
     area = [ (row['xmax']-row['xmin'])*row['ymax']-row['ymin'] for index, row in data.iterrows() ]
     data["Area"] = area
     data.sort_values(by=['Area'], inplace=True, ascending=False)
 
-    data = data[(data.name == 'person')]
+    
     print(data)
     if len(data) == 0 :
         return None
@@ -27,14 +29,15 @@ def detect(image , model):
     
     area = int(data.iloc[0]["Area"])
     name = data.iloc[0]["name"]
-
+    if name not in ["car","person"]:
+        name = "others"
     return (x1,y1,x2,y2,area,name)
 
 
 def draw(image , obj_data):
     x1,y1,x2,y2,obj_area, obj_name = obj_data
     image_area = image.shape[0]*image.shape[1]
-    obj_area = (x2-x1)*(y2-y1)
+    
         
     if obj_area < 0.4*image_area:
         color = (0,255,0)
